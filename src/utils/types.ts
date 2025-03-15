@@ -5,6 +5,8 @@ export type Piece = {
 };
 
 export type Cell = {
+  r: number;
+  c: number;
   color: 'white' | 'black';
   piece?: Piece;
 };

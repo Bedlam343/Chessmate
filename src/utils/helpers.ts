@@ -4,7 +4,8 @@ export const initializeBoard = (): Board => {
   const board: Board = Array.from({ length: 8 }, (_, r) =>
     Array.from(
       { length: 8 },
-      (_, i) => ({ color: (i + r) % 2 == 0 ? 'black' : 'white' } satisfies Cell)
+      (_, c) =>
+        ({ color: (c + r) % 2 == 0 ? 'black' : 'white', r, c } satisfies Cell)
     )
   );
 
@@ -80,6 +81,5 @@ export const initializeBoard = (): Board => {
     }
   }
 
-  console.log(board);
   return board;
 };
