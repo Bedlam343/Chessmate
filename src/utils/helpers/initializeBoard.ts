@@ -1,12 +1,12 @@
 import { Board, Cell, Piece } from 'src/utils/types';
 
-export const initializeBoard = (): Board => {
+const initializeBoard = (): Board => {
   const board: Board = Array.from({ length: 8 }, (_, r) =>
     Array.from(
       { length: 8 },
       (_, c) =>
-        ({ color: (c + r) % 2 == 0 ? 'black' : 'white', r, c } satisfies Cell)
-    )
+        ({ color: (c + r) % 2 == 0 ? 'black' : 'white', r, c } satisfies Cell),
+    ),
   );
 
   for (let c = 0; c < 8; ++c) {
@@ -83,3 +83,5 @@ export const initializeBoard = (): Board => {
 
   return board;
 };
+
+export default initializeBoard;

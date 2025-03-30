@@ -4,10 +4,12 @@ import {
   useRef,
   useState,
 } from 'react';
-import { initializeBoard } from 'src/utils/helpers';
+import initializeBoard from 'src/utils/helpers/initializeBoard';
+import getUpdatedBoard from 'src/utils/helpers/getUpdatedBoard';
 import { Board, Cell } from 'src/utils/types';
 
 function App() {
+  const [numMoves, setNumMoves] = useState<number>(0);
   const [board, setBoard] = useState<Board>(initializeBoard());
 
   const boardRef = useRef<HTMLDivElement>(null);
@@ -32,19 +34,14 @@ function App() {
         currentCell.current &&
         sourceCell.current
       ) {
-        const srcR = sourceCell.current.r;
-        const srcC = sourceCell.current.c;
-        const curR = currentCell.current.r;
-        const curC = currentCell.current.c;
-        const piece = { ...sourceCell.current!.piece! };
+        const srcCell = sourceCell.current;
+        const curCell = currentCell.current;
 
-        setBoard((prevBoard) => {
-          const updatedBoard = [...prevBoard];
-
-          updatedBoard[srcR][srcC].piece = undefined;
-          updatedBoard[curR][curC].piece = piece;
-          return updatedBoard;
-        });
+        const updatedBoard = getUpdatedBoard(srcCell, curCell, board, numMoves);
+        if (updatedBoard) {
+          setBoard(updatedBoard);
+          setNumMoves((prev) => prev + 1);
+        }
 
         const pieceDiv = document.getElementById(
           grabbedPieceRef.current.id,
@@ -59,7 +56,7 @@ function App() {
     document.addEventListener('mouseup', handleMouseUp);
 
     return () => document.removeEventListener('mouseup', handleMouseUp);
-  }, []);
+  }, [board, numMoves]);
 
   const movePiece = (clientX: number, clientY: number) => {
     if (grabbedPieceRef.current) {
