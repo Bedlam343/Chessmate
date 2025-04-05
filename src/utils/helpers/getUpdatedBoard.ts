@@ -1,5 +1,28 @@
 import { Board, Cell } from 'src/utils/types';
 
+const canMoveDiagonally = (srcCell: Cell, destCell: Cell, board: Board) => {
+  const { r: srcR, c: srcC, piece } = srcCell;
+  const { r: desR, c: desC } = destCell;
+
+  if (Math.abs(desC - srcC) === Math.abs(desR - srcR)) {
+    let r = desR,
+      c = desC;
+
+    while (Math.abs(r - srcR) >= 1 && Math.abs(c - srcC) >= 1) {
+      if (board[r][c].piece?.color === piece?.color) {
+        return false;
+      }
+
+      r = desR > srcR ? r - 1 : r + 1;
+      c = desC > srcC ? c - 1 : c + 1;
+    }
+
+    return true;
+  }
+
+  return false;
+};
+
 const getUpdatedBoard = (
   srcCell: Cell,
   destCell: Cell,
@@ -77,6 +100,9 @@ const getUpdatedBoard = (
           }
         }
       }
+      break;
+    case 'bishop':
+      isLegalMove = canMoveDiagonally(srcCell, destCell, board);
       break;
     default:
       break;
