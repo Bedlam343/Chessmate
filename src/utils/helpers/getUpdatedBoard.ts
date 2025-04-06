@@ -158,6 +158,21 @@ const getUpdatedBoard = (
     case 'rook':
       isLegalMove = canMoveStraight(srcCell, destCell, updatedBoard);
       break;
+    case 'queen':
+      isLegalMove =
+        canMoveDiagonally(srcCell, destCell, updatedBoard) ||
+        canMoveStraight(srcCell, destCell, updatedBoard);
+      break;
+    case 'knight':
+      if (
+        (Math.abs(srcR - desR) === 2 && Math.abs(srcC - desC) === 1) ||
+        (Math.abs(srcR - desR) === 1 && Math.abs(srcC - desC) === 2)
+      ) {
+        if (board[desR][desC].piece?.color !== piece?.color) {
+          isLegalMove = true;
+        }
+      }
+      break;
     default:
       break;
   }
