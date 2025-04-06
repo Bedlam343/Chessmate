@@ -4,17 +4,68 @@ const canMoveDiagonally = (srcCell: Cell, destCell: Cell, board: Board) => {
   const { r: srcR, c: srcC, piece } = srcCell;
   const { r: desR, c: desC } = destCell;
 
-  if (Math.abs(desC - srcC) === Math.abs(desR - srcR)) {
-    let r = desR,
-      c = desC;
+  // is diagonal movement
+  if (srcR !== desR && Math.abs(desC - srcC) === Math.abs(desR - srcR)) {
+    let r = srcR,
+      c = srcC;
 
-    while (Math.abs(r - srcR) >= 1 && Math.abs(c - srcC) >= 1) {
-      if (board[r][c].piece?.color === piece?.color) {
+    // can't move if there's a piece on the way to destination cel
+    while (Math.abs(r - desR) >= 1 && Math.abs(c - desC) >= 1) {
+      if (r !== srcR && c !== srcC && Boolean(board[r][c].piece)) {
         return false;
       }
 
-      r = desR > srcR ? r - 1 : r + 1;
-      c = desC > srcC ? c - 1 : c + 1;
+      r = desR > srcR ? r + 1 : r - 1;
+      c = desC > srcC ? c + 1 : c - 1;
+    }
+
+    // can't move if destination piece is same color
+    if (board[desR][desC].piece?.color === piece?.color) {
+      return false;
+    }
+
+    return true;
+  }
+
+  return false;
+};
+
+const canMoveStraight = (srcCell: Cell, destCell: Cell, board: Board) => {
+  const { r: srcR, c: srcC, piece } = srcCell;
+  const { r: desR, c: desC } = destCell;
+
+  let r = srcR,
+    c = srcC;
+
+  if (srcR - desR !== 0 && srcC - desC === 0) {
+    // can't move if there's a piece in the way
+    while (Math.abs(r - desR) >= 1) {
+      if (r !== srcR && board[r][c].piece) {
+        return false;
+      }
+
+      r = desR > srcR ? r + 1 : r - 1;
+    }
+
+    // can't move if destination piece is same color
+    if (board[desR][desC].piece?.color === piece?.color) {
+      return false;
+    }
+
+    return true;
+  } else if (srcC - desC !== 0 && srcR - desR === 0) {
+    // can't move if there's a piece in the way
+    while (Math.abs(c - desC) >= 1) {
+      if (c !== srcC && board[r][c].piece) {
+        return false;
+      }
+
+      c = desC > srcC ? c + 1 : c - 1;
+    }
+
+    // can't move if destination piece is same color
+    if (board[desR][desC].piece?.color === piece?.color) {
+      return false;
     }
 
     return true;
@@ -102,7 +153,10 @@ const getUpdatedBoard = (
       }
       break;
     case 'bishop':
-      isLegalMove = canMoveDiagonally(srcCell, destCell, board);
+      isLegalMove = canMoveDiagonally(srcCell, destCell, updatedBoard);
+      break;
+    case 'rook':
+      isLegalMove = canMoveStraight(srcCell, destCell, updatedBoard);
       break;
     default:
       break;
