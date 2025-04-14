@@ -79,9 +79,18 @@ const getUpdatedBoard = (
   destCell: Cell,
   board: Board,
   numMoves: number,
+  whiteTurn: boolean,
 ): Board | null => {
   const { piece } = srcCell;
-  if (!piece) return board;
+
+  if (!piece) return null;
+
+  // turn tracking
+  if (
+    (piece.color === 'white' && !whiteTurn) ||
+    (piece.color === 'black' && whiteTurn)
+  )
+    return null;
 
   let isLegalMove = false;
 
@@ -169,6 +178,17 @@ const getUpdatedBoard = (
         (Math.abs(srcR - desR) === 1 && Math.abs(srcC - desC) === 2)
       ) {
         if (board[desR][desC].piece?.color !== piece?.color) {
+          isLegalMove = true;
+        }
+      }
+      break;
+    case 'king':
+      if (
+        (Math.abs(srcR - desR) === 1 && Math.abs(srcC - desC)) === 0 ||
+        (Math.abs(srcR - desR) === 0 && Math.abs(srcC - desC)) === 1 ||
+        (Math.abs(srcR - desR) === 1 && Math.abs(srcC - desC) === 1)
+      ) {
+        if (board[desR][desC].piece?.color !== piece.color) {
           isLegalMove = true;
         }
       }

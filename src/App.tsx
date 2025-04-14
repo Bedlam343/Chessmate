@@ -11,6 +11,7 @@ import { Board, Cell } from 'src/utils/types';
 function App() {
   const [numMoves, setNumMoves] = useState<number>(0);
   const [board, setBoard] = useState<Board>(initializeBoard());
+  const [whiteTurn, setWhiteTurn] = useState<boolean>(true);
 
   const boardRef = useRef<HTMLDivElement>(null);
   const grabbedPieceRef = useRef<HTMLDivElement>(null);
@@ -37,10 +38,18 @@ function App() {
         const srcCell = sourceCell.current;
         const curCell = currentCell.current;
 
-        const updatedBoard = getUpdatedBoard(srcCell, curCell, board, numMoves);
+        const updatedBoard = getUpdatedBoard(
+          srcCell,
+          curCell,
+          board,
+          numMoves,
+          whiteTurn,
+        );
+
         if (updatedBoard) {
           setBoard(updatedBoard);
           setNumMoves((prev) => prev + 1);
+          setWhiteTurn(!whiteTurn);
         }
 
         const pieceDiv = document.getElementById(
@@ -56,7 +65,7 @@ function App() {
     document.addEventListener('mouseup', handleMouseUp);
 
     return () => document.removeEventListener('mouseup', handleMouseUp);
-  }, [board, numMoves]);
+  }, [board, numMoves, whiteTurn]);
 
   const movePiece = (clientX: number, clientY: number) => {
     if (grabbedPieceRef.current) {
